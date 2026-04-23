@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flujo Macro Gestión de Proyectos Riverine</title>
+    <!-- Importación de Montserrat -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --riverine-navy: #002351;
+            --stage-header: #002351;
+            --comercial-accent: #2563eb;
+            --comercial-bg: #eff6ff;
+            --ops-accent: #059669;
+            --ops-bg: #ecfdf5;
+            --admin-accent: #334155;
+            --admin-bg: #f8fafc;
+            --text-white: #ffffff;
+            --text-gray: #64748b;
+            --border-color: #cbd5e1;
+            --zebra-bg: rgba(248, 250, 252, 0.5);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #e2e8f0;
+            padding: 32px;
+            min-height: 100vh;
+            color: #1e293b;
+        }
+
+        .main-container {
+            max-width: 1600px;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+        }
+
+        /* Header Principal */
+        .header {
+            background-color: var(--riverine-navy);
+            padding: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: var(--text-white);
+        }
+
+        .header-text h1 {
+            font-size: 24px;
+            font-weight: 400;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 8px;
+        }
+
+        .header-text p {
+            font-size: 10px;
+            font-weight: 400;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            color: #cbd5e1;
+            opacity: 0.8;
+        }
+
+        .logo-container {
+            height: 80px;
+        }
+
+        .logo-container img {
+            height: 100%;
+            width: auto;
+            object-fit: contain;
+        }
+
+        /* Tabla Swimlane */
+        .overflow-wrapper {
+            overflow-x: auto;
+        }
+
+        .diagram-grid {
+            min-width: 1300px;
+            display: grid;
+            grid-template-columns: 192px repeat(6, 1fr);
+        }
+
+        /* Etapas Header */
+        .stage-header {
+            background-color: var(--stage-header);
+            color: var(--text-white);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .header-cell {
+            padding: 16px;
+            text-align: center;
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .header-cell:last-child {
+            border-right: none;
+        }
+
+        .header-cell .title {
+            font-size: 11px;
+            font-weight: 400;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 4px;
+        }
+
+        .header-cell .subtitle {
+            font-size: 9px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            opacity: 0.6;
+        }
+
+        .lane-label-header {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            opacity: 0.4;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Filas y Carriles */
+        .lane-row {
+            display: contents;
+        }
+
+        .lane-label {
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-right: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            left: 0;
+            z-index: 10;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.05);
+        }
+
+        .lane-label .icon {
+            background: white;
+            padding: 8px;
+            border-radius: 50%;
+            margin-bottom: 12px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .lane-label .name {
+            font-size: 10px;
+            font-weight: 400;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            line-height: 1.2;
+        }
+
+        .cell {
+            padding: 12px;
+            border-right: 1px solid #e2e8f0;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .cell:last-child {
+            border-right: none;
+        }
+
+        /* Estilo Celdas Cebras */
+        .cell-zebra {
+            background-color: var(--zebra-bg);
+        }
+
+        /* Bloques de Proceso */
+        .process-box {
+            width: 100%;
+            max-width: 150px;
+            border-radius: 4px;
+            border-left: 4px solid rgba(0, 0, 0, 0.2);
+            color: white;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .process-box:hover {
+            filter: brightness(1.1);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .box-content {
+            padding: 8px;
+            flex-grow: 1;
+        }
+
+        .box-title-area {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 4px;
+        }
+
+        .box-title {
+            font-size: 10px;
+            font-weight: 400;
+            text-transform: uppercase;
+            line-height: 1.2;
+            letter-spacing: 0.05em;
+        }
+
+        .sop-list {
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            padding-top: 4px;
+            margin-top: 4px;
+            list-style: none;
+        }
+
+        .sop-item {
+            font-size: 8px;
+            opacity: 0.9;
+            line-height: 1.2;
+        }
+
+        .box-footer {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 4px 8px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .box-footer span {
+            font-size: 8px;
+            text-transform: uppercase;
+            letter-spacing: -0.02em;
+        }
+
+        /* Diamante de Decisión */
+        .decision-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 4px;
+        }
+
+        .diamond {
+            width: 80px;
+            height: 80px;
+            background-color: #f59e0b;
+            border: 2px solid #b45309;
+            transform: rotate(45deg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .diamond-text {
+            transform: rotate(-45deg);
+            font-size: 9px;
+            font-weight: 400;
+            text-align: center;
+            color: white;
+            text-transform: uppercase;
+            line-height: 1.1;
+            padding: 4px;
+        }
+
+        .decision-resp {
+            margin-top: 16px;
+            background-color: #fef3c7;
+            color: #b45309;
+            font-size: 8px;
+            text-transform: uppercase;
+            padding: 2px 4px;
+            border-radius: 2px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* Colores de Área */
+        .bg-comercial { background-color: var(--comercial-accent); }
+        .bg-operaciones { background-color: var(--ops-accent); }
+        .bg-administracion { background-color: var(--admin-accent); }
+
+        .lane-comercial { background-color: var(--comercial-bg); border-color: #bfdbfe; color: #2563eb; }
+        .lane-operaciones { background-color: var(--ops-bg); border-color: #a7f3d0; color: #059669; }
+        .lane-administracion { background-color: var(--admin-bg); border-color: #cbd5e1; color: #334155; }
+
+        /* Conectores */
+        .connector {
+            color: #cbd5e1;
+        }
+
+        /* Leyenda */
+        .footer-legend {
+            background-color: #f1f5f9;
+            padding: 16px;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 9px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: #64748b;
+        }
+
+        .legend-items {
+            display: flex;
+            gap: 32px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        .dot-comercial { background-color: var(--comercial-accent); }
+        .dot-operaciones { background-color: var(--ops-accent); }
+        .dot-finanzas { background-color: var(--admin-accent); }
+
+        .transversal-info {
+            opacity: 0.7;
+            letter-spacing: 0;
+        }
+
+        /* SVG Icons Utility */
+        .icon-svg {
+            width: 12px;
+            height: 12px;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 2;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="main-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-text">
+                <h1>FLUJO MACRO GESTIÓN DE PROYECTOS RIVERINE</h1>
+                <p>Consultoría de Ingeniería & Estudios | Matriz de Responsabilidades</p>
+            </div>
+            <div class="logo-container">
+                <img src="Logo Riverin sin fondo (4).png" alt="Logo Riverine">
+            </div>
+        </header>
+
+        <div class="overflow-wrapper">
+            <div class="diagram-grid">
+                
+                <!-- Etapas Header -->
+                <div class="lane-row stage-header">
+                    <div class="lane-label-header">ÁREAS / FASES</div>
+                    <div class="header-cell">
+                        <div class="title">1. Desarrollo de Negocio</div>
+                        <div class="subtitle">Captación</div>
+                    </div>
+                    <div class="header-cell">
+                        <div class="title">2. Adjudicación e Inicio</div>
+                        <div class="subtitle">Formalización</div>
+                    </div>
+                    <div class="header-cell">
+                        <div class="title">3. Planificación</div>
+                        <div class="subtitle">Estrategia</div>
+                    </div>
+                    <div class="header-cell">
+                        <div class="title">4. Ejecución Operativa</div>
+                        <div class="subtitle">Producción</div>
+                    </div>
+                    <div class="header-cell">
+                        <div class="title">5. Entrega y Tramitación</div>
+                        <div class="subtitle">Validación</div>
+                    </div>
+                    <div class="header-cell">
+                        <div class="title">6. Aprobación y Cierre</div>
+                        <div class="subtitle">Finalización</div>
+                    </div>
+                </div>
+
+                <!-- Fila Comercial -->
+                <div class="lane-row">
+                    <div class="lane-label lane-comercial">
+                        <div class="icon">
+                            <svg class="icon-svg" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
+                        </div>
+                        <div class="name">Comercial / Ventas</div>
+                    </div>
+                    
+                    <!-- S1 -->
+                    <div class="cell">
+                        <div class="process-box bg-comercial">
+                            <div class="box-content">
+                                <div class="box-title">Detección Oportunidades</div>
+                                <ul class="sop-list"><li class="sop-item">• Mercado Público</li></ul>
+                            </div>
+                            <div class="box-footer"><span>COORD. GESTIÓN Y DESARROLLO</span></div>
+                        </div>
+                        <div class="connector">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                        </div>
+                        <div class="process-box bg-comercial">
+                            <div class="box-content">
+                                <div class="box-title">Elaboración Propuesta</div>
+                                <ul class="sop-list"><li class="sop-item">• Presupuesto</li><li class="sop-item">• Propuesta Técnica</li></ul>
+                            </div>
+                            <div class="box-footer"><span>COORD. G&D + GERENTE ING.</span></div>
+                        </div>
+                    </div>
+
+                    <!-- S2 -->
+                    <div class="cell cell-zebra">
+                        <div class="process-box bg-comercial">
+                            <div class="box-content">
+                                <div class="box-title">Traspaso Comercial-Op</div>
+                            </div>
+                            <div class="box-footer"><span>COORD. GESTIÓN Y DESARROLLO</span></div>
+                        </div>
+                    </div>
+
+                    <!-- S3 -->
+                    <div class="cell"></div>
+
+                    <!-- S4 -->
+                    <div class="cell cell-zebra"></div>
+
+                    <!-- S5 -->
+                    <div class="cell"></div>
+
+                    <!-- S6 -->
+                    <div class="cell cell-zebra">
+                        <div class="process-box bg-comercial">
+                            <div class="box-content">
+                                <div class="box-title">Cierre Contractual</div>
+                            </div>
+                            <div class="box-footer"><span>COORD. GESTIÓN Y DESARROLLO</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Fila Operaciones -->
+                <div class="lane-row">
+                    <div class="lane-label lane-operaciones">
+                        <div class="icon">
+                            <svg class="icon-svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                        </div>
+                        <div class="name">Ingeniería / Operaciones</div>
+                    </div>
+                    
+                    <!-- S1 -->
+                    <div class="cell">
+                        <div class="process-box bg-operaciones">
+                            <div class="box-content">
+                                <div class="box-title">Factibilidad Técnica</div>
+                            </div>
+                            <div class="box-footer"><span>GERENTE ING. / LÍDER ING.</span></div>
+                        </div>
+                    </div>
+
+                    <!-- S2 -->
+                    <div class="cell cell-zebra">
+                        <div class="process-box bg-operaciones">
+                            <div class="box-content">
+                                <div class="box-title">Designación Equipo</div>
+                                <ul class="sop-list"><li class="sop-item">• Acta de Inicio</li></ul>
+                            </div>
+                            <div class="box-footer"><span>LÍDER DE INGENIERÍA</span></div>
+                        </div>
+                    </div>
+
+                    <!-- S3 -->
+                    <div class="cell">
+                        <div class="process-box bg-operaciones">
+                            <div class="box-content">
+                                <div class="box-title">Plan de Trabajo</div>
+                                <ul class="sop-list"><li class="sop-item">• Cronograma Gantt</li><li class="sop-item">• Plan Terreno</li></ul>
+                            </div>
+                            <div class="box-footer"><span>LÍDER INGENIERÍA</span></div>
+                        </div>
+                    </div>
+
+                    <!-- S4 -->
+                    <div class="cell cell-zebra">
+                        <div class="process-box bg-operaciones">
+                            <div class="box-content">
+                                <div class="box-title">Levantamiento Terreno</div>
+                                <ul class="sop-list"><li class="sop-item">• Topografía</li><li class="sop-item">• Estudios Hidráulicos</li></ul>
+                            </div>
+                            <div class="box-footer"><span>LÍDER DE OPERACIONES</span></div>
+                        </div>
+                        <div class="process-box bg-operaciones">
+                            <div class="box-content">
+                                <div class="box-title">Modelación y Estudios</div>
+                                <ul class="sop-list"><li class="sop-item">• Modelos Numéricos</li></ul>
+                            </div>
+                            <div class="box-footer"><span>LÍDER DE INGENIERÍA</span></div>
+                        </div>
+                    </div>
+
+                    <!-- S5 -->
+                    <div class="cell">
+                        <div class="process-box bg-operaciones">
+                            <div class="box-content">
+                                <div class="box-title">Control Calidad</div>
+                            </div>
+                            <div class="box-footer"><span>GERENTE ING. / LÍDER ING.</span></div>
+                        </div>
+                        <div class="decision-container">
+                            <div class="diamond">
+                                <div class="diamond-text">¿Ingreso a Autoridad?</div>
+                            </div>
+                            <div class="decision-resp"><span>GERENTE ING. / LÍDER ING.</span></div>
+                        </div>
+                        <div class="process-box bg-operaciones">
+                            <div class="box-content">
+                                <div class="box-title">Emisión Entregables</div>
+                            </div>
+                            <div class="box-footer"><span>LÍDER INGENIERÍA</span></div>
+                        </div>
+                    </div>
+
+                    <!-- S6 -->
+                    <div class="cell cell-zebra"></div>
+                </div>
+
+                <!-- Fila Administración -->
+                <div class="lane-row">
+                    <div class="lane-label lane-administracion">
+                        <div class="icon">
+                            <svg class="icon-svg" viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>
+                        </div>
+                        <div class="name">Admin. / Finanzas</div>
+                    </div>
+                    
+                    <!-- S1 -->
+                    <div class="cell"></div>
+
+                    <!-- S2 -->
+                    <div class="cell cell-zebra">
+                        <div class="process-box bg-administracion">
+                            <div class="box-content">
+                                <div class="box-title">Setup Financiero</div>
+                                <ul class="sop-list"><li class="sop-item">• Carpeta Drive</li><li class="sop-item">• Config. EDP</li></ul>
+                            </div>
+                            <div class="box-footer"><span>COORD. GESTIÓN Y DESARROLLO</span></div>
+                        </div>
+                    </div>
+
+                    <!-- S3 -->
+                    <div class="cell"></div>
+
+                    <!-- S4 -->
+                    <div class="cell cell-zebra">
+                        <a href="https://drive.google.com/file/d/1AaTdGAJpks9adz9dqiodwj3LJ9tTzwPw/view?usp=drive_link" target="_blank" class="process-box bg-administracion">
+                            <div class="box-content">
+                                <div class="box-title-area">
+                                    <div class="box-title">Gestión Logística</div>
+                                    <svg class="icon-svg" style="opacity:0.7" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                                </div>
+                                <ul class="sop-list"><li class="sop-item">• Vehículos</li><li class="sop-item">• Pasajes</li></ul>
+                            </div>
+                            <div class="box-footer"><span>ADMINISTRACIÓN</span></div>
+                        </a>
+                        <div class="process-box bg-administracion">
+                            <div class="box-content">
+                                <div class="box-title">Control Gastos</div>
+                                <ul class="sop-list"><li class="sop-item">• Rendiciones</li></ul>
+                            </div>
+                            <div class="box-footer"><span>ADMINISTRACIÓN</span></div>
+                        </div>
+                    </div>
+
+                    <!-- S5 -->
+                    <div class="cell"></div>
+
+                    <!-- S6 -->
+                    <div class="cell cell-zebra">
+                        <div class="process-box bg-administracion">
+                            <div class="box-content">
+                                <div class="box-title">Liquidación Proyecto</div>
+                                <ul class="sop-list"><li class="sop-item">• Factura Final</li><li class="sop-item">• Backup Digital</li></ul>
+                            </div>
+                            <div class="box-footer"><span>COORD. GESTIÓN Y DESARROLLO</span></div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Leyenda -->
+        <footer class="footer-legend">
+            <div class="legend-items">
+                <div class="legend-item">
+                    <div class="dot dot-comercial"></div>
+                    <span>Ventas</span>
+                </div>
+                <div class="legend-item">
+                    <div class="dot dot-operaciones"></div>
+                    <span>Ingeniería</span>
+                </div>
+                <div class="legend-item">
+                    <div class="dot dot-finanzas"></div>
+                    <span>Finanzas</span>
+                </div>
+            </div>
+            <div class="transversal-info">
+                Procesos Transversales: Control EDP y Seguridad de Información
+            </div>
+        </footer>
+    </div>
+
+</body>
+</html>
